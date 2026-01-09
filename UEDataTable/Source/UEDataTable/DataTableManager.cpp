@@ -6,6 +6,7 @@
 #include "JsonUtilities.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
+#include "UObject/UObjectGlobals.h"
 
 UDataTableManager::UDataTableManager()
 {
@@ -16,14 +17,21 @@ UDataTable* UDataTableManager::LoadDataTableFromCSV(const FString& CSVFilePath)
 	FString FullPath = FPaths::ProjectContentDir() + CSVFilePath;
 	
 	// 尝试直接加载资源
+	// 构建资源路径：/Game/Path/AssetName.AssetName
 	FString AssetPath = TEXT("/Game/") + CSVFilePath;
 	AssetPath = FPaths::ChangeExtension(AssetPath, TEXT(""));
 	
-	UDataTable* DataTable = LoadObject<UDataTable>(nullptr, *AssetPath);
+	// 提取资源名称（文件名，不含扩展名）
+	FString AssetName = FPaths::GetBaseFilename(AssetPath);
+	// 构建完整的对象路径：PackagePath.AssetName
+	FString FullAssetPath = AssetPath + TEXT(".") + AssetName;
+	
+	// 使用 StaticLoadObject 并设置 LOAD_NoWarn 标志以抑制警告
+	UDataTable* DataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *FullAssetPath, nullptr, LOAD_NoWarn));
 	
 	if (DataTable)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Successfully loaded DataTable from: %s"), *AssetPath);
+		UE_LOG(LogTemp, Log, TEXT("Successfully loaded DataTable from: %s"), *FullAssetPath);
 		return DataTable;
 	}
 
@@ -67,14 +75,21 @@ UDataTable* UDataTableManager::LoadDataTableFromJSON(const FString& JSONFilePath
 	FString FullPath = FPaths::ProjectContentDir() + JSONFilePath;
 	
 	// 尝试直接加载资源
+	// 构建资源路径：/Game/Path/AssetName.AssetName
 	FString AssetPath = TEXT("/Game/") + JSONFilePath;
 	AssetPath = FPaths::ChangeExtension(AssetPath, TEXT(""));
 	
-	UDataTable* DataTable = LoadObject<UDataTable>(nullptr, *AssetPath);
+	// 提取资源名称（文件名，不含扩展名）
+	FString AssetName = FPaths::GetBaseFilename(AssetPath);
+	// 构建完整的对象路径：PackagePath.AssetName
+	FString FullAssetPath = AssetPath + TEXT(".") + AssetName;
+	
+	// 使用 StaticLoadObject 并设置 LOAD_NoWarn 标志以抑制警告
+	UDataTable* DataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *FullAssetPath, nullptr, LOAD_NoWarn));
 	
 	if (DataTable)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Successfully loaded DataTable from: %s"), *AssetPath);
+		UE_LOG(LogTemp, Log, TEXT("Successfully loaded DataTable from: %s"), *FullAssetPath);
 		return DataTable;
 	}
 
