@@ -17,7 +17,7 @@ class UEDATATABLE_API ADataTableTest : public AActor
 	GENERATED_BODY()
 	
 public:	
-	ADataTableTest();
+	ADataTableTest(const FObjectInitializer& ObjectInitializer);
 
 protected:
 	virtual void BeginPlay() override;

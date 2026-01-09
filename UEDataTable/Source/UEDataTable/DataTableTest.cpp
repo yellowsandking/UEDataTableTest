@@ -3,12 +3,13 @@
 #include "DataTableTest.h"
 #include "Engine/Engine.h"
 
-ADataTableTest::ADataTableTest()
+ADataTableTest::ADataTableTest(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick = false;
 
 	// 创建DataTable管理器
-	DataTableManager = NewObject<UDataTableManager>(this);
+	DataTableManager = CreateDefaultSubobject<UDataTableManager>(TEXT("DataTableManager"));
 
 	// 设置默认文件路径
 	CSVFilePath = TEXT("DataTables/ConfigData.csv");
@@ -84,7 +85,7 @@ void ADataTableTest::TestFindByID()
 	FConfigDataTableRow FoundRow;
 	if (DataTableManager->FindRowByID(CSVDataTable, 1, FoundRow))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Found row with ID=1: Name=%s, Description=%s"), 
+		UE_LOG(LogTemp, Warning, TEXT("Found row with ID=1: Name=%s, Description=%s"),
 			*FoundRow.Name, *FoundRow.Description);
 	}
 	else
@@ -117,7 +118,7 @@ void ADataTableTest::TestFindByName()
 	FConfigDataTableRow FoundRow;
 	if (DataTableManager->FindRowByName(CSVDataTable, TEXT("Config1"), FoundRow))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Found row with Name=Config1: ID=%d, Description=%s"), 
+		UE_LOG(LogTemp, Warning, TEXT("Found row with Name=Config1: ID=%d, Description=%s"),
 			FoundRow.ID, *FoundRow.Description);
 	}
 	else
@@ -142,7 +143,7 @@ void ADataTableTest::TestGetAllRows()
 	UE_LOG(LogTemp, Warning, TEXT("Total rows: %d"), AllRows.Num());
 	for (const FConfigDataTableRow& Row : AllRows)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("  ID=%d, Name=%s, Description=%s"), 
+		UE_LOG(LogTemp, Warning, TEXT("  ID=%d, Name=%s, Description=%s"),
 			Row.ID, *Row.Name, *Row.Description);
 	}
 }
